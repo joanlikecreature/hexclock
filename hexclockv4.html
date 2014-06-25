@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=yes" />
+<title>Hex clock</title>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<link rel="stylesheet" type="text/css" href="http://www.joanlikecreature.com/styles/styles.css">
+<style>
+html body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+
+}
+.background {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	vertical-align: middle;
+}
+
+#hex, #clock {
+	vertical-align: middle;
+	text-transform: uppercase;
+	color: white;
+	text-align: center;
+	font-size: 65px;
+	display: block;
+	min-width: 200px;
+	font-weight: 100;
+	margin: auto;
+}
+
+#description {
+	width: 100%;
+	color: rgba(255, 255, 255, 0.90);
+	display: block;
+	font-size: 14px;
+	position: absolute;
+	bottom: 0px;
+	font-weight: 300;
+}
+#description a {
+	color: inherit;
+}
+
+.center {
+	/*width: 50%;*/
+  	margin: auto;
+  	padding-top: 6em;
+}
+
+.show-time{
+	display: block;
+}
+
+.show-hex {
+	display: none;
+}
+
+</style>
+</head>
+<body>
+	<div class="background">
+		<div class="center">
+			<p id="hex" class="toggle comp"></p>
+			<p id="clock" class="toggle comp"></p>
+			<p id="description" class="toggle comp">Click the clocks to toggle visibility.<br/>This hexclock cycles through one hex colour per second, or all the colours in appoximately 194 days (check?).<br/>Credit: Based on <a href="http://www.jacopocolo.com/hexclock/" target="_blank">Jacopo Colo's hexclock</a></p>
+			
+		</div>
+	</div>
+</body>
+<script>
+var complement;
+
+function refreshData()
+{
+    x = 1;  // x = milliseconds
+ 	var d = new Date();
+ 	var h = d.getHours();
+ 	var min = d.getMinutes();
+ 	var s = d.getSeconds();
+ 	var milli = d.getMilliseconds();
+
+ 	if (h<=9) {h = '0'+h};
+ 	if (min<=9) {min = '0'+min};
+	if (s<=9) {s = '0'+s};
+	if (milli<=9) {milli = '00'+s};
+	if (milli<=99) {milli = '0'+s};
+
+	var hexdate = parseInt(d.valueOf()/1000).toString(16);
+ 	var hextime = hexdate.substring(hexdate.length-6, hexdate.length);
+ 	var	color = '#' + hextime;
+ 	complement = '#' + (0xffffff + (~parseInt(hextime,16))).toString(16);
+
+ 	
+    $("div.background").css("background-color", color);
+    $(".show").css("color", "#ffffff");
+    $(".comp").css("color", complement);
+    $(".hide").css("color", color );
+
+
+    $("p#hex").text("#"+hextime);
+    $("p#clock").text(h +":"+min +":"+s); 
+    setTimeout(refreshData, x*5);
+}
+  
+refreshData(); // execute function
+
+$(".toggle").mousedown(function(){
+  	if($(this).hasClass("show")){
+		$(this).removeClass("show").addClass("comp");
+	}
+	else if($(this).hasClass("comp")){
+		$(this).removeClass("comp").addClass("hide");
+	}
+	else{
+		$(this).removeClass("hide").addClass("show");
+	}
+});
+
+function dec2hex(d) {return d.toString(16);}
+function hex2dec(h) {return parseInt(h,16);}
+
+</script>
+</html>
